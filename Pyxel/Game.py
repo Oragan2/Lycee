@@ -32,6 +32,8 @@ class App:
             if t:
                 for m in self.monst:
                     m.hp = m.hp_max
+                    m.mp = m.mp_max
+                    m.statue = "Alive"()
                 self.state = 2
         elif self.state == 2:
             if self.cs == 1:
@@ -74,7 +76,7 @@ class App:
                         self.dmg(self.monst[self.c])
                     else:
                         self.dmg(self.monst[self.c])
-                    if self.monst != []:
+                    if  [b for b in self.monst if b.statue != "Dead"] != []:
                         self.cs = 6
                     else:
                         self.cs = 1
@@ -94,6 +96,8 @@ class App:
                 self.c = 2
                 self.time = time.time()
         elif self.state == 3:
+            if self.monst[self.i].statue == "Dead":
+                self.monst[self.i].ca = False
             if self.monst[self.i].sp == [] and self.monst[self.i].ca:
                 self.att = random.choice(self.monst[self.i].att)
             elif self.monst[self.i].att == [] and self.monst[self.i].ca:
@@ -182,9 +186,8 @@ class App:
             elif self.cs == 4:
                 self.text_box([],True)
             elif self.cs == 5:
-                self.text_box([mst.name+" : "+str(mst.hp)+"/"+str(mst.hp_max)+" hp, lvl : "+str(mst.lvl) for mst in self.monst]+["" for i in range(5-len(self.monst))],True)
+                self.text_box([mst.name+" : "+str(mst.hp)+"/"+str(mst.hp_max)+" hp, lvl : "+str(mst.lvl) for mst in self.monst if mst.statue != "Dead"]+["" for i in range(5-len([b for b in self.monst if b.statue != "Dead"]))],True)
         elif self.state == 3:
-            print(self.monst)
             self.show_ennemy()
             pyxel.rect(32,112,30,60,9)
             if type(self.att) == Spell and self.monst[self.i].mp - self.att.mc > 0:
@@ -217,32 +220,36 @@ class App:
     
     def show_ennemy(self):
         for i in range(len(self.monst)):
-            pyxel.rect(145+35*i,0+35*i,32,32,4)
+            if self.monst[i].statue != "Dead":
+                pyxel.rect(145+35*i,0+35*i,32,32,4)
     
     def dmg(self,v):
         if type(v) != Player and type(self.att) == Spell:
             if self.att.t == "All":
-                for m in self.monst:
+                for m in [b for b in self.monst if b.statue != "Dead"]:
                     m.hp -= self.att.dmg*self.player.int
+                    if m.hp <= 0:
+                        self.death(m)
             else:
                 v.hp -= self.att.dmg*self.player.int
         elif type(v) != Player and type(self.att) == Attack:
             if self.att.t == "All":
-                for m in self.monst:
+                for m in  [b for b in self.monst if b.statue != "Dead"]:
                     m.hp -= self.att.dmg*self.player.f
+                    if m.hp <= 0:
+                        self.death(m)
             else:
                 v.hp -= self.att.dmg*self.player.f
         else:
             v.hp -= self.att.dmg
-        for m in self.monst:
-            if m.hp <= 0:
-                self.death(m)
+        if v in self.monst and v.hp <= 0:
+            self.death(v)
     
-    def death(self,v):
+    def death(self,v:Monster):
         if type(v) == Player:
             self.state = 5
         else:
-            self.monst.pop(self.monst.index(v))
+            v.statue = "Dead"
             self.player.exp += random.randint(2*v.lvl,5*v.lvl)
 
 App()
