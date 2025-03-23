@@ -33,7 +33,7 @@ class App:
                 for m in self.monst:
                     m.hp = m.hp_max
                     m.mp = m.mp_max
-                    m.statue = "Alive"()
+                    m.statue = "Alive"
                 self.state = 2
         elif self.state == 2:
             if self.cs == 1:
