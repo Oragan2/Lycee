@@ -15,11 +15,15 @@ def show():
         print(line)
 
 def rotate(room):
-    new_room = None
-    
-    return new_room
+    shape = []
+    door = []
+    for coo in room.shape:
+        shape.append((coo[1],-coo[0]))
+    for coo in room.doors:
+        door.append((coo[1],-coo[0]))
+    return Room(room.symbole, shape, door)
 
-R1 = Room("#",[(0,0),(0,1)],[(0,2),(1,1)])
+R1 = Room("#",[(0,0),(0,1),(1,0)],[(0,2),(1,1)])
 R2 = Room("/",[(0,0),(1,0),(0,1),(1,1)],[(2,1),(1,2),(0,-1)])
 R3 = Room("%",[(0,0),(0,1),(0,-1),(1,0)],[(2,0),(0,2),(0,-2)])
 R4 = Room("!",[(0,0)],[(1,0),(-1,0)])
@@ -37,11 +41,16 @@ while not Full:
     ok = True
     room = ran.choice(Rooms)
     pos = positions[0]
+    checked = False
     if Sizes_left-len(room.shape) > 0:
-        for coo in room.shape:
-            new_coo = (pos[0] + coo[0], pos[1] + coo[1])
-            if new_coo[0] < 0 or new_coo[1] < 0 or new_coo in Took_pos or new_coo[0] >= size or new_coo[1] >= size:
-                ok = False
+        for i in range(4):
+            ok = True
+            room = rotate(room)
+            for coo in room.shape:
+                new_coo = (pos[0] + coo[0], pos[1] + coo[1])
+                if new_coo[0] < 0 or new_coo[1] < 0 or new_coo in Took_pos or new_coo[0] >= size or new_coo[1] >= size:
+                    ok = False
+            if ok:
                 break
         if ok:
             for coo in room.shape:
