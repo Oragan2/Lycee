@@ -252,4 +252,8 @@ class App:
             v.statue = "Dead"
             self.player.exp += random.randint(2*v.lvl,5*v.lvl)
 
+<<<<<<< HEAD
 App()
+=======
+App()
+>>>>>>> fc9acc5024275baf41e857549168f97a380f1a0b

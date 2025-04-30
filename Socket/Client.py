@@ -3,7 +3,11 @@ import customtkinter
 
 class Client:
     def __init__(self):
+<<<<<<< HEAD
         HOST = "100.115.92.200"
+=======
+        HOST = "127.0.0.1"
+>>>>>>> fc9acc5024275baf41e857549168f97a380f1a0b
         PORT = 9999
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.client.connect((HOST,PORT))

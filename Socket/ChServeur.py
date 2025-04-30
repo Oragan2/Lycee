@@ -1,7 +1,11 @@
 import socket
 import threading
 
+<<<<<<< HEAD
 HOST = '10.0.0.37'
+=======
+HOST = '127.0.0.1'
+>>>>>>> fc9acc5024275baf41e857549168f97a380f1a0b
 PORT = 9999
 
 serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

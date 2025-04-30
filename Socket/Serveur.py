@@ -4,7 +4,11 @@ import hashlib
 import threading
 
 #socket
+<<<<<<< HEAD
 HOST = "10.0.0.37"
+=======
+HOST = "0.0.0.0"
+>>>>>>> fc9acc5024275baf41e857549168f97a380f1a0b
 PORT = 9999
 
 serveur = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -69,8 +73,15 @@ def handle(client:socket, mode:bool, info:bytes):
     if mode:
         if check(user,mdp):
             client.send("Info correct".encode())
+<<<<<<< HEAD
         else:
             client.send("Info incorrect".encode())
+=======
+            client.close()
+        else:
+            client.send("Info incorrect".encode())
+            client.close()
+>>>>>>> fc9acc5024275baf41e857549168f97a380f1a0b
     else:
         resp = add(user,mdp)
         client.send(resp.encode())
