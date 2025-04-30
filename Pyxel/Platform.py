@@ -14,10 +14,6 @@ class App:
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        for i in range(128):
-            for j in range(128):
-                if pyxel.pget(i,j) == 0:
-                    self.rc.append((i,j))
         self.pp = (self.x,self.y)
         if pyxel.btn(pyxel.KEY_SPACE) and self.onGround:
             self.y -= 19
