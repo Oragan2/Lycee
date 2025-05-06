@@ -65,12 +65,19 @@ async def handle_joke_request(message):
         return random.choice(jokes)
     return None
 
+async def handle_feeling(message):
+    feeling_pattern = r'(how are you|how you feeling|how you doing)'
+    if re.search(feeling_pattern, message, re.IGNORECASE):
+        return "I'm good"
+
+async def handle_thanks(message, author):
+    thanking_pattern = r'(thx|thanks|thank you)'
+    if re.search(thanking_pattern, message, re.IGNORECASE):
+        return f"No problem {author.name}"
+
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user.name}')
-    for guild in bot.guilds:
-        if guild.id not in learned_patterns:
-            learned_patterns[guild.id] = []
 
 @bot.event
 async def on_message(message):
@@ -95,11 +102,26 @@ async def on_message(message):
             responses.append(joke_response)
             intents = 'demand_joke'
 
-        with open("intent_data.txt","a") as file:
-            file.write(f"{message.author}:{msg}\t{intents}\n")
+        feeling_response = await handle_feeling(msg)
+        if feeling_response:
+            responses.append(feeling_response)
+            intents = 'demand_feeling'
 
-    if responses and (bot.user.mentioned_in(message) or "memo" in message.content.lower()):
-        await message.channel.send("\n".join(responses))
+        thanking_response = await handle_thanks(msg, message.author)
+        if thanking_response:
+            responses.append(thanking_response)
+            intents = 'thanking'
+
+        if intents != "unknow":
+            with open("intent_data.txt","a") as file:
+                file.write(f"{message.author}:{msg}\t{intents}\n")
+
+    await bot.create_dm(message.author)
+    if responses and (bot.user.mentioned_in(message) or "memo" in message.content.lower() or message.channel.id == message.author.dm_channel.id):
+        if message.content[0:2] == "DM":
+            await message.author.send("\n".join(responses))
+        else:
+            await message.channel.send("\n".join(responses))
 
 if __name__ == "__main__":
     bot.run(TOKEN)
